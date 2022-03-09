@@ -1,18 +1,38 @@
-/*
- * Project Project1
- * Description:
- * Author:
- * Date:
- */
+/**** 
+Name: Lab6/Project1 
+Author: Ben Pink
+Description: Your Description Here 
+Bugs: A list here (or "none that I know of", if that is the case) 
+Reflection: A short discussion of how you found this assignment 
+****/ 
 
-// setup() runs once, when the device is first turned on.
+#include "HC_SR04.h"
+
+int button = D3;
+int trigPin = D4;
+int echoPin = D5;
+double inches = 0.0;
+int buttonTimer;
+HC_SR04 rangeFinder = HC_SR04(trigPin, echoPin);
+
 void setup() {
-  // Put initialization like pinMode and begin functions here.
-
+  pinMode(button, INPUT_PULLUP);
+  buttonTimer = Time.now();
 }
 
-// loop() runs over and over again, as quickly as it can execute.
 void loop() {
-  // The core of your code will likely live here.
-
+  if (digitalRead(button) == LOW && Time.now() - buttonTimer < 1)
+  {
+    buttonTimer--;
+    inches = rangeFinder.getDistanceInch();
+    delay(50);
+    if (inches <= 24)
+    {
+      Particle.publish("Close_Contact", String(inches), PRIVATE);
+    }
+  }
+  else
+  {
+    buttonTimer = Time.now();
+  }
 }
